@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EGIS!</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            color: black;
+            background-image: url("egis.png");
+            background-size: 100% auto;
+            background-position: center 100px;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        button {
+            font-size: 24px;
+            padding: 20px 30px;
+            width: 300px;
+            max-width: 100%;
+            cursor: pointer;
+            color: black;
+            background: rgba(255, 255, 255, 0.92);
+            border: 3px solid black;
+        }
+
+        button:hover {
+            background: #ddd;
+        }
+
+        .menu {
+            position: absolute;
+            right: 6%;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .panel {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 3px solid black;
+            padding: 50px;
+            background: rgba(255, 255, 255, 0.96);
+            text-align: center;
+            width: 500px;
+            max-width: 92%;
+            min-height: 300px;
+        }
+
+        .panel h2 {
+            font-size: 40px;
+        }
+
+        .panel p {
+            font-size: 26px;
+        }
+
+        .close {
+            width: 50px;
+            height: 50px;
+            padding: 0;
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            font-size: 30px;
+        }
+
+        #volume {
+            width: 100%;
+            height: 35px;
+            cursor: pointer;
+        }
+
+        #story {
+            display: none;
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .story-box {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: min(520px, calc(100% - 40px));
+            padding: 25px;
+            border: 3px solid black;
+            background: rgba(255, 255, 255, 0.9);
+            text-align: left;
+        }
+
+        .story-box h1 {
+            font-size: 36px;
+            margin: 0 0 15px;
+        }
+
+        #narration {
+            font-size: 24px;
+            line-height: 1.5;
+            margin: 0 0 20px;
+        }
+
+        .story-box button {
+            width: 100%;
+        }
+
+        #game,
+        #ending {
+            display: none;
+            position: fixed;
+            inset: 0;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.88);
+            padding: 25px;
+            text-align: center;
+        }
+
+        .game-box {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 25px;
+            border: 4px solid black;
+            background: rgba(255, 255, 255, 0.96);
+        }
+
+        .can {
+            width: 130px;
+            height: 230px;
+            border: 4px solid black;
+            border-radius: 0;
+            margin: 25px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+            background: #ddd;
+            transition: transform 0.2s;
+        }
+
+        .meter {
+            height: 28px;
+            border: 2px solid black;
+            margin: 10px 0 20px;
+            background: #eee;
+        }
+
+        .bar {
+            height: 100%;
+            width: 0%;
+            transition: width 0.15s;
+        }
+
+        #noiseBar {
+            background: #e8b44e;
+        }
+
+        #speedBar {
+            background: #68a9e8;
+        }
+
+        #progressBar {
+            background: #65b96b;
+        }
+
+        .game-box button {
+            width: 100%;
+            margin: 8px 0;
+        }
+
+        .description {
+            font-size: 20px;
+            line-height: 1.5;
+        }
+
+        .ending-box {
+            max-width: 800px;
+            margin: 10vh auto;
+            border: 4px solid black;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.96);
+        }
+
+        @media (max-width: 700px) {
+            .menu {
+                left: 20px;
+                right: 20px;
+                top: 50%;
+                transform: translateY(-50%);
+                gap: 14px;
+            }
+
+            .menu button {
+                width: 100%;
+            }
+
+            .panel {
+                padding: 35px 20px;
+            }
+
+            .story-box {
+                top: 12px;
+                left: 12px;
+                width: calc(100% - 24px);
+                padding: 18px;
+            }
+
+            .story-box h1 {
+                font-size: 28px;
+            }
+
+            #narration {
+                font-size: 20px;
+            }
+
+            #game,
+            #ending {
+                padding: 12px;
+            }
+
+            .game-box {
+                padding: 15px;
+            }
+
+            .ending-box {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="menu" id="mainMenu">
+        <button onclick="startStory()">Aloita Peli</button>
+        <button onclick="openPanel('settings')">Asetukset</button>
+        <button onclick="openPanel('credits')">Credits</button>
+        <button onclick="exitGame()">Poistu Pelistä</button>
+    </div>
+
+    <div class="panel" id="credits">
+        <button class="close" onclick="closePanels()">×</button>
+        <h2>Credits</h2>
+        <p>Tekijät:</p>
+        <p>Toivo</p>
+        <p>Feeli</p>
+    </div>
+
+    <div class="panel" id="settings">
+        <button class="close" onclick="closePanels()">×</button>
+        <h2>Asetukset</h2>
+        <p>Äänenvoimakkuus</p>
+        <p1>Täs pelis ei oo btw ääniä</p1>
+        <input
+            type="range"
+            id="volume"
+            min="0"
+            max="100"
+            value="50"
+            oninput="document.getElementById('volumeValue').textContent = this.value + '%'"
+        >
+        <p id="volumeValue">50%</p>
+    </div>
+
+    <div id="story">
+        <div class="story-box">
+            <h1 id="sceneTitle"></h1>
+            <p id="narration"></p>
+            <button onclick="exitStory()">Päävalikko</button>
+        </div>
+    </div>
+
+    <div id="game">
+        <div class="game-box">
+            <h1>EGIS</h1>
+            <p id="gameText" class="description">
+                Eero löytää Egis-tölkin huoneestaan.
+            </p>
+
+            <div class="can" id="can">EGIS</div>
+
+            <h2>Desibelimittari</h2>
+            <p id="noiseValue">Ääni: 0</p>
+            <div class="meter">
+                <div class="bar" id="noiseBar"></div>
+            </div>
+
+            <h2>Nopeusmittari</h2>
+            <p id="speedValue">Nopeus: 0</p>
+            <div class="meter">
+                <div class="bar" id="speedBar"></div>
+            </div>
+
+            <h2>Edistyminen</h2>
+            <div class="meter">
+                <div class="bar" id="progressBar"></div>
+            </div>
+
+            <button id="actionButton" onclick="gameAction()">Avaa Egis</button>
+            <p id="gameStatus">Valmis?</p>
+        </div>
+    </div>
+
+    <div id="ending">
+        <div class="ending-box">
+            <h1 id="endingTitle"></h1>
+            <p id="endingText" class="description"></p>
+            <button onclick="restartGame()">Pelaa uudelleen</button>
+            <br><br>
+            <button onclick="exitStory()">Päävalikko</button>
+        </div>
+    </div>
+
+    <script>
+        const scenes = [
+            {
+                title: "Koulupäivä",
+                text: 'Eero sai tunnilla idean: "Menempäs koulun jälkeen kauppaan ja ostan Egiksen!"',
+                image: "egis1.png"
+            },
+            {
+                title: "Mietteitä",
+                text: '"Vanhempani ovat kyllä kieltäneet Egikset ja niiden juonnin..."',
+                image: "egis2.png"
+            },
+            {
+                title: "Suunnitelma",
+                text: '"Mutta mitä jos juon sen hiljaa ja nopeaa huoneessani?" Eero mietti.',
+                image: "egis3.png"
+            }
+        ];
+
+        let currentScene = 0;
+        let sceneTimer = null;
+        let noiseTimer = null;
+        let gamePhase = 0;
+        let noise = 0;
+        let speed = 0;
+        let progress = 0;
+        let actionStart = 0;
+        let lastNoiseTime = Date.now();
+        let gameFinished = false;
+        let storyRunId = 0;
+
+        const preloadedSceneImages = scenes.map(scene => {
+            const image = new Image();
+            image.src = scene.image;
+            return image;
+        });
+
+        const scenesReady = Promise.all(
+            preloadedSceneImages.map(image => {
+                if (image.complete && image.naturalWidth > 0) {
+                    return typeof image.decode === "function"
+                        ? image.decode().catch(() => {})
+                        : Promise.resolve();
+                }
+
+                return new Promise(resolve => {
+                    const finishLoading = () => {
+                        if (typeof image.decode === "function" && image.naturalWidth > 0) {
+                            image.decode().catch(() => {}).finally(resolve);
+                        } else {
+                            resolve();
+                        }
+                    };
+
+                    image.addEventListener("load", finishLoading, { once: true });
+                    image.addEventListener("error", resolve, { once: true });
+                });
+            })
+        );
+
+        function openPanel(id) {
+            closePanels();
+            document.getElementById(id).style.display = "block";
+        }
+
+        function closePanels() {
+            document.getElementById("credits").style.display = "none";
+            document.getElementById("settings").style.display = "none";
+        }
+
+        async function startStory() {
+            closePanels();
+            clearTimeout(sceneTimer);
+            clearTimeout(noiseTimer);
+
+            const runId = ++storyRunId;
+
+            await scenesReady;
+
+            if (runId !== storyRunId) return;
+
+            document.getElementById("mainMenu").style.display = "none";
+            document.getElementById("game").style.display = "none";
+            document.getElementById("ending").style.display = "none";
+            document.getElementById("story").style.display = "block";
+
+            currentScene = 0;
+            showScene(runId);
+        }
+
+        function showScene(runId) {
+            clearTimeout(sceneTimer);
+
+            if (runId !== storyRunId) return;
+
+            const story = document.getElementById("story");
+            const scene = scenes[currentScene];
+
+            story.style.backgroundImage = 'url("' + scene.image + '")';
+            document.getElementById("sceneTitle").textContent = scene.title;
+            document.getElementById("narration").textContent = scene.text;
+
+            const sceneStartedAt = performance.now();
+
+            function advanceScene() {
+                if (runId !== storyRunId) return;
+
+                const elapsed = performance.now() - sceneStartedAt;
+                const remaining = Math.max(0, 3000 - elapsed);
+
+                if (remaining > 0) {
+                    sceneTimer = setTimeout(advanceScene, remaining);
+                    return;
+                }
+
+                if (currentScene < scenes.length - 1) {
+                    currentScene++;
+                    showScene(runId);
+                } else {
+                    startGame();
+                }
+            }
+
+            sceneTimer = setTimeout(advanceScene, 3000);
+        }
+
+        function startGame() {
+            clearTimeout(sceneTimer);
+            clearTimeout(noiseTimer);
+            ++storyRunId;
+
+            document.getElementById("story").style.display = "none";
+            document.getElementById("game").style.display = "block";
+
+            gamePhase = 0;
+            noise = 0;
+            speed = 0;
+            progress = 0;
+            gameFinished = false;
+            lastNoiseTime = Date.now();
+
+            document.getElementById("can").textContent = "EGIS";
+            document.getElementById("can").style.transform = "none";
+            document.getElementById("gameText").textContent =
+                "Eero löytää Egis-tölkin huoneestaan.";
+            document.getElementById("gameStatus").textContent =
+                "Avaa tölkki aloittaaksesi.";
+            document.getElementById("actionButton").textContent =
+                "Avaa Egis";
+
+            updateMeters();
+            decayNoise();
+        }
+
+        function gameAction() {
+            if (gameFinished) return;
+
+            const now = Date.now();
+
+            if (gamePhase === 0) {
+                gamePhase = 1;
+                actionStart = now;
+                noise = Math.min(100, noise + 35);
+                lastNoiseTime = now;
+
+                document.getElementById("can").style.transform =
+                    "rotate(-10deg)";
+
+                document.getElementById("gameText").textContent =
+                    "Egis on avattu. Eero alkaa juoda sitä.";
+                document.getElementById("gameStatus").textContent =
+                    "Tölkki avattu.";
+                document.getElementById("actionButton").textContent =
+                    "Juo Egistä";
+            } else {
+                const elapsed = Math.max(0.1, (now - actionStart) / 1000);
+
+                speed = Math.min(100, Math.round(100 / elapsed));
+                progress = Math.min(100, progress + 25);
+                noise = Math.min(100, noise + Math.max(5, speed * 0.35));
+                lastNoiseTime = now;
+                actionStart = now;
+
+                document.getElementById("can").style.transform =
+                    "rotate(" + (progress % 2 ? 8 : -8) + "deg)";
+
+                if (progress >= 100) {
+                    updateMeters();
+                    finishGame();
+                    return;
+                }
+
+                document.getElementById("gameText").textContent =
+                    "Eero juo Egistä. Hän on juonut " + progress + "% tölkistä.";
+                document.getElementById("gameStatus").textContent =
+                    "Edistyminen: " + progress + "%";
+            }
+
+            updateMeters();
+        }
+
+        function decayNoise() {
+            if (gameFinished) return;
+
+            const now = Date.now();
+            const elapsed = (now - lastNoiseTime) / 1000;
+
+            noise = Math.max(0, noise - elapsed * 8);
+            lastNoiseTime = now;
+
+            updateMeters();
+            noiseTimer = setTimeout(decayNoise, 100);
+        }
+
+        function updateMeters() {
+            document.getElementById("noiseValue").textContent =
+                "Ääni: " + Math.round(noise);
+
+            document.getElementById("speedValue").textContent =
+                "Nopeus: " + speed;
+
+            document.getElementById("noiseBar").style.width =
+                noise + "%";
+
+            document.getElementById("speedBar").style.width =
+                speed + "%";
+
+            document.getElementById("progressBar").style.width =
+                progress + "%";
+        }
+
+        function finishGame() {
+            gameFinished = true;
+            clearTimeout(noiseTimer);
+
+            document.getElementById("game").style.display = "none";
+            document.getElementById("ending").style.display = "block";
+
+            if (noise >= 70 || speed >= 80) {
+                document.getElementById("endingTitle").textContent =
+                    "BAD ENDING";
+
+                document.getElementById("endingText").textContent =
+                    "Eero saa Egiksen juotua, mutta vanhemmat kuulevat metelin ja tulevat Eeron huoneeseen. Eero saa vyöstä";
+            } else {
+                document.getElementById("endingTitle").textContent =
+                    "HYVÄ LOPETUS";
+
+                document.getElementById("endingText").textContent =
+                    "Eero saa juotua Egiksen kokonaan!";
+            }
+        }
+
+        function restartGame() {
+            startStory();
+        }
+
+        function exitStory() {
+            ++storyRunId;
+            clearTimeout(sceneTimer);
+            clearTimeout(noiseTimer);
+
+            document.getElementById("story").style.display = "none";
+            document.getElementById("game").style.display = "none";
+            document.getElementById("ending").style.display = "none";
+            document.getElementById("mainMenu").style.display = "flex";
+        }
+
+        function exitGame() {
+            window.close();
+        }
+    </script>
+
+</body>
+</html>
