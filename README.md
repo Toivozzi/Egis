@@ -8,3 +8,8 @@ Toivoton Gamesin kehittämä todella laadukas peli.
 - Eero on huoneessaan, Eeron pitää avata megis hiljaa ja juoda se pitämättä ääntä.
 - Jos Eero saa juotua Egiksen hiljaa, ilman että vanhemmat kuulee, läpäiset pelin.
 - Jos vanhemmat kuulevat, he tulevat huoneeseen ja isä rankaisee.
+## Credits:
+- Toivo
+- Feeli
+- Refresco Group B.V
+- NettiBrous
