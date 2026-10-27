@@ -11,5 +11,5 @@ Toivoton Gamesin kehittämä todella laadukas peli.
 ## Credits:
 - Toivo
 - Feeli
-- Refresco Group B.V
+- Refresco Benelux
 - NettiBrous
