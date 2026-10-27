@@ -1,3 +1,4 @@
+<!-- Jos sä näet tän kaikki on kunnossa :DDDDD-->
 <!DOCTYPE html>
 <html lang="fi">
 <head>
@@ -294,10 +295,9 @@
 
     <div id="game">
         <div class="game-box">
-            <img src="Egis4.png" alt="Italian Trulli">
             <h1>EGIS</h1>
             <p id="gameText" class="description">
-                Eero löytää Egis-tölkin huoneestaan.
+                Eero on nyt huoneessaan, megis kädessään.
             </p>
 
             <div class="can" id="can">EGIS</div>
@@ -342,13 +342,13 @@
                 image: "egis1.png"
             },
             {
-                title: "Mietteitä",
+                title: "Mietintäää",
                 text: '"Vanhempani ovat kyllä kieltäneet Egikset ja niiden juonnin..."',
                 image: "egis2.png"
             },
             {
                 title: "Suunnitelma",
-                text: '"Mutta mitä jos juon sen hiljaa ja nopeaa huoneessani?" Eero mietti.',
+                text: '"Mutta mitä jos juon sen hiljaa, nopeaa huoneessani ja ilman että isä rankaisee?" Eero mietti.',
                 image: "egis3.png"
             }
         ];
@@ -574,16 +574,16 @@
 
             if (noise >= 70 || speed >= 80) {
                 document.getElementById("endingTitle").textContent =
-                    "BAD ENDING";
+                    "HUONO LOPETUS";
 
                 document.getElementById("endingText").textContent =
-                    "Eero saa Egiksen juotua, mutta vanhemmat kuulevat metelin ja tulevat Eeron huoneeseen. Isä nostaa korvista leipä uunin päälle";
+                    "Eero saa Egiksen juotua, mutta vanhemmat kuulevat metelin ja tulevat Eeron huoneeseen. Isä nostaa korvista leipäuunin päälle";
             } else {
                 document.getElementById("endingTitle").textContent =
                     "HYVÄ LOPETUS";
 
                 document.getElementById("endingText").textContent =
-                    "Eero saa juotua Egiksen kokonaan!";
+                    "Eero saa juotua Egiksen ja vanhemmat ei kuulleet!!!";
             }
         }
 
