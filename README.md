@@ -1,5 +1,6 @@
 # Egis 
 Toivoton Gamesin kehittämä todella laadukas peli.
+Suomalainen, koukuttava, nopea, jatkuvasti päivityksiä :OOOOOO
 ## Pelin Idea:
 - Tavoitteena on juoda Egis juoma mahdollisimman nopeaa ja hiljaa.
 ## Pelin Kulku:
