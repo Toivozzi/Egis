@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EGIS!</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="menu" id="mainMenu">
+        <button onclick="startStory()">Aloita Peli</button>
+        <button onclick="openPanel('settings')">Asetukset</button>
+        <button onclick="openPanel('credits')">Credits</button>
+        <button onclick="exitGame()">Poistu Pelistä</button>
+    </div>
+
+    <div class="panel" id="credits">
+        <button class="close" onclick="closePanels()">×</button>
+        <h2>Credits</h2>
+        <p>Tekijät:</p>
+        <p>Toivo</p>
+        <p>Feeli</p>
+        <p>Refresco Benelux</p>
+        <p>NettiBrous</p>
+    </div>
+
+    <div class="panel" id="settings">
+        <button class="close" onclick="closePanels()">×</button>
+        <h2>Asetukset</h2>
+
+        <p>Musiikki</p>
+        <button class="setting-button" id="musicToggle" onclick="toggleMusic()">
+            Musiikki: PÄÄLLÄ
+        </button>
+
+        <p>Ääniefektit</p>
+        <button class="setting-button" id="effectsToggle" onclick="toggleEffects()">
+            Ääniefektit: PÄÄLLÄ
+        </button>
+
+        <p>Äänenvoimakkuus</p>
+        <input
+            type="range"
+            id="volume"
+            min="0"
+            max="100"
+            value="50"
+            oninput="changeVolume(this.value)"
+        >
+        <p id="volumeValue">50%</p>
+    </div>
+
+    <div id="story">
+        <div class="story-box">
+            <h1 id="sceneTitle"></h1>
+            <p id="narration"></p>
+            <button onclick="exitStory()">Päävalikko</button>
+            <button onclick="skipScene()">Skippaa</button>
+        </div>
+    </div>
+
+    <div id="game">
+        <div class="game-box">
+            <h1>EGIS</h1>
+            <p id="gameText" class="description">
+                Eero on nyt huoneessaan, megis kädessään.
+            </p>
+
+            <div class="can" id="can">EGIS</div>
+
+            <h2>Desibelimittari</h2>
+            <p id="noiseValue">Ääni: 0</p>
+            <div class="meter">
+                <div class="bar" id="noiseBar"></div>
+            </div>
+
+            <h2>Nopeusmittari</h2>
+            <p id="speedValue">Nopeus: 0</p>
+            <div class="meter">
+                <div class="bar" id="speedBar"></div>
+            </div>
+
+            <h2>Edistyminen</h2>
+            <div class="meter">
+                <div class="bar" id="progressBar"></div>
+            </div>
+
+            <button id="actionButton" onclick="gameAction()">Avaa Egis</button>
+            <button class="mini-button" onclick="vomit()">Oksenna</button>
+            <p id="gameStatus">Valmis?</p>
+        </div>
+    </div>
+
+    <div id="ending">
+        <div class="ending-box">
+            <h1 id="endingTitle"></h1>
+            <p id="endingText" class="description"></p>
+            <button onclick="restartGame()">Pelaa uudelleen</button>
+            <br><br>
+            <button onclick="exitStory()">Päävalikko</button>
+        </div>
+    </div>
+
+    <div id="jumpscare">
+        <img src="jumpscare.png" alt="">
+    </div>
+
+    <audio id="music" src="musiikki.mp3" loop preload="auto"></audio>
+    <audio id="sceneSound" preload="auto"></audio>
+    <audio id="egisSound" src="egis.mp3" preload="auto"></audio>
+
+    <script src="script.js"></script>
+</body>
+</html>
