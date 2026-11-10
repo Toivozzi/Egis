@@ -121,6 +121,8 @@ function changeVolume(value) {
     updateAudioSettings();
 }
 
+// Scene Toivo tekstit :OOOOOOOOO
+
 const scenes = [
     {
         title: "Koulupäivä",
