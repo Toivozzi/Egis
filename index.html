@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fi">
 <head>
@@ -328,6 +329,7 @@
             <h1 id="sceneTitle"></h1>
             <p id="narration"></p>
             <button onclick="exitStory()">Päävalikko</button>
+            <button onclick="skipScene()">Skippaa</button>
         </div>
     </div>
 
@@ -634,6 +636,17 @@
             sceneTimer = setTimeout(advanceScene, 3000);
         }
 
+        function skipScene() {
+            clearTimeout(sceneTimer);
+
+            if (currentScene < scenes.length - 1) {
+                currentScene++;
+                showScene(storyRunId);
+            } else {
+                startGame();
+            }
+        }
+
         function startGame() {
             clearTimeout(sceneTimer);
             clearTimeout(noiseTimer);
@@ -704,7 +717,7 @@
 
                 if (progress >= 100) {
                     updateMeters();
-                    finishGame();
+                    finishGame(true);
                     return;
                 }
 
@@ -727,6 +740,12 @@
             lastNoiseTime = now;
 
             updateMeters();
+
+            if (noise >= 100) {
+                finishGame(false);
+                return;
+            }
+
             noiseTimer = setTimeout(decayNoise, 100);
         }
 
@@ -747,12 +766,24 @@
                 progress + "%";
         }
 
-        function finishGame() {
+        function finishGame(success) {
             gameFinished = true;
             clearTimeout(noiseTimer);
 
             document.getElementById("game").style.display = "none";
             document.getElementById("ending").style.display = "block";
+
+            if (success) {
+                document.getElementById("endingTitle").textContent =
+                    "Hyvä lopetus";
+                document.getElementById("endingText").textContent =
+                    "Eero sai Egiksen juotua.";
+            } else {
+                document.getElementById("endingTitle").textContent =
+                    "Huono lopetus";
+                document.getElementById("endingText").textContent =
+                    "Isä suuttui ja rankaisi Eeroa.";
+            }
         }
 
         function restartGame() {
