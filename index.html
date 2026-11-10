@@ -213,6 +213,24 @@
             background: rgba(255, 255, 255, 0.96);
         }
 
+        #jumpscare {
+            display: none;
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100vh;
+            height: 100dvh;
+            background: black;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        #jumpscare img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         @media (max-width: 700px) {
             .menu {
                 left: 20px;
@@ -354,6 +372,10 @@
         </div>
     </div>
 
+    <div id="jumpscare">
+        <img src="jumpscare.png" alt="">
+    </div>
+
     <audio id="music" src="musiikki.mp3" loop preload="auto"></audio>
     <audio id="sceneSound" preload="auto"></audio>
     <audio id="egisSound" src="egis.mp3" preload="auto"></audio>
@@ -362,6 +384,12 @@
         const music = document.getElementById("music");
         const sceneSound = document.getElementById("sceneSound");
         const egisSound = document.getElementById("egisSound");
+        const jumpscare = document.getElementById("jumpscare");
+
+        const jumpscarePreload = new Image();
+        jumpscarePreload.src = "jumpscare.png";
+
+        let jumpscareTimer = null;
 
         let musicEnabled = true;
         let effectsEnabled = true;
@@ -371,6 +399,17 @@
         music.volume = volume;
         sceneSound.volume = volume;
         egisSound.volume = volume;
+
+        function showJumpscare() {
+            if (jumpscare.style.display === "block") return;
+
+            jumpscare.style.display = "block";
+
+            clearTimeout(jumpscareTimer);
+            jumpscareTimer = setTimeout(() => {
+                jumpscare.style.display = "none";
+            }, 3000);
+        }
 
         function updateAudioSettings() {
             music.volume = volume;
@@ -629,6 +668,10 @@
 
         function gameAction() {
             if (gameFinished) return;
+
+            if (Math.random() < 0.1) {
+                showJumpscare();
+            }
 
             const now = Date.now();
 
