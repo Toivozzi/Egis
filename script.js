@@ -226,9 +226,6 @@ async function startStory() {
     document.getElementById("story").style.display = "block";
 
     currentScene = 0;
-
-    playEffect(egisSound, "egis.mp3");
-
     showScene(runId);
 }
 
@@ -290,6 +287,8 @@ function startGame() {
 
     document.getElementById("story").style.display = "none";
     document.getElementById("game").style.display = "block";
+
+    playEffect(egisSound, "egis.mp3");
 
     gamePhase = 0;
     noise = 0;
