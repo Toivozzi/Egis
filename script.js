@@ -2,6 +2,8 @@ const music = document.getElementById("music");
 const sceneSound = document.getElementById("sceneSound");
 const egisSound = document.getElementById("egisSound");
 const jumpscare = document.getElementById("jumpscare");
+const actionSound = new Audio("sound4.mp3");
+actionSound.preload = "auto";
 
 const jumpscarePreload = new Image();
 jumpscarePreload.src = "jumpscare.png";
@@ -16,6 +18,7 @@ let userStartedAudio = false;
 music.volume = volume;
 sceneSound.volume = volume;
 egisSound.volume = volume;
+actionSound.volume = volume;
 
 function showJumpscare() {
     if (jumpscare.style.display === "block") return;
@@ -32,6 +35,7 @@ function updateAudioSettings() {
     music.volume = volume;
     sceneSound.volume = volume;
     egisSound.volume = volume;
+    actionSound.volume = volume;
 
     if (!musicEnabled) {
         music.pause();
@@ -93,6 +97,15 @@ function playSceneSound(index) {
     sceneSound.play().catch(() => {});
 }
 
+function playActionSound() {
+    if (!effectsEnabled) return;
+
+    actionSound.pause();
+    actionSound.currentTime = 0;
+    actionSound.volume = volume;
+    actionSound.play().catch(() => {});
+}
+
 function toggleMusic() {
     musicEnabled = !musicEnabled;
     updateAudioSettings();
@@ -108,6 +121,7 @@ function toggleEffects() {
     if (!effectsEnabled) {
         sceneSound.pause();
         egisSound.pause();
+        actionSound.pause();
     }
 
     updateAudioSettings();
@@ -212,6 +226,9 @@ async function startStory() {
     document.getElementById("story").style.display = "block";
 
     currentScene = 0;
+
+    playEffect(egisSound, "egis.mp3");
+
     showScene(runId);
 }
 
@@ -274,8 +291,6 @@ function startGame() {
     document.getElementById("story").style.display = "none";
     document.getElementById("game").style.display = "block";
 
-    playEffect(egisSound, "egis.mp3");
-
     gamePhase = 0;
     noise = 0;
     speed = 0;
@@ -298,6 +313,8 @@ function startGame() {
 
 function gameAction() {
     if (gameFinished) return;
+
+    playActionSound();
 
     if (Math.random() < 0.1) {
         showJumpscare();
@@ -421,6 +438,7 @@ function exitStory() {
 
     sceneSound.pause();
     egisSound.pause();
+    actionSound.pause();
 
     document.getElementById("story").style.display = "none";
     document.getElementById("game").style.display = "none";
