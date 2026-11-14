@@ -22,7 +22,7 @@ jumpscareKuva.src = "jumpscare.png";
 
 let jumpscareAjastin = null;
 
-let musiikkiPaalla = true;
+let musiikkiPaalla = false;
 let efektitPaalla = true;
 let aanenvoimakkuus = 0.5;
 let aanetKaynnistetty = false;
@@ -42,6 +42,14 @@ function vaihdaVaikeustasoa() {
 }
 
 musiikki.volume = aanenvoimakkuus;
+musiikki.loop = true;
+
+musiikki.addEventListener("ended", () => {
+    musiikki.currentTime = 0;
+    if (musiikkiPaalla) {
+        musiikki.play().catch(() => {});
+    }
+});
 kohtausAani.volume = aanenvoimakkuus;
 egisAani.volume = aanenvoimakkuus;
 toimintoAani.volume = aanenvoimakkuus;
@@ -56,7 +64,7 @@ function naytaJumpscare() {
 
     jumpscare.style.display = "block";
 
-    soitaEfekti(jumpscareAani, "sound7.mp3");
+    soitaEfekti(jumpscareAani, "sound8.mp3");
 
     clearTimeout(jumpscareAjastin);
     jumpscareAjastin = setTimeout(() => {
