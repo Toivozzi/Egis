@@ -24,9 +24,13 @@ let jumpscareAjastin = null;
 
 let musiikkiPaalla = false;
 let efektitPaalla = true;
-let aanenvoimakkuus = 0.5;
-let aanetKaynnistetty = false;
+let musiikinAanenvoimakkuus = 0.5;
+let efektienAanenvoimakkuus = 0.5;
 let vaikeustaso = "Helppo";
+let ensimmainenAaniJoKaynnistetty = false;
+
+musiikki.volume = musiikinAanenvoimakkuus;
+musiikki.loop = true;
 
 function vaihdaVaikeustasoa() {
     if (vaikeustaso === "Helppo") {
@@ -41,41 +45,58 @@ function vaihdaVaikeustasoa() {
         "Vaikeustaso: " + vaikeustaso;
 }
 
-musiikki.volume = aanenvoimakkuus;
-musiikki.loop = true;
+function kaikkiAanet() {
+    return [
+        kohtausAani,
+        egisAani,
+        toimintoAani,
+        nappainAani,
+        voittoAani,
+        havioAani,
+        oksennusAani,
+        jumpscareAani
+    ];
+}
 
-kohtausAani.volume = aanenvoimakkuus;
-egisAani.volume = aanenvoimakkuus;
-toimintoAani.volume = aanenvoimakkuus;
-nappainAani.volume = aanenvoimakkuus;
-voittoAani.volume = aanenvoimakkuus;
-havioAani.volume = aanenvoimakkuus;
-oksennusAani.volume = aanenvoimakkuus;
-jumpscareAani.volume = aanenvoimakkuus;
+function asetaTeksti(tunniste, teksti) {
+    const elementti = document.getElementById(tunniste);
+    if (elementti) elementti.textContent = teksti;
+}
 
-function naytaJumpscare() {
-    if (jumpscare.style.display === "block") return;
+function asetaLiukusaadin(tunniste, arvo) {
+    const elementti = document.getElementById(tunniste);
+    if (elementti && Number(elementti.value) !== arvo) {
+        elementti.value = arvo;
+    }
+}
 
-    jumpscare.style.display = "block";
+function paivitaMusiikinNaytto() {
+    const prosentti = Math.round(musiikinAanenvoimakkuus * 100);
+    asetaTeksti("musicVolumeValue", prosentti + "%");
+    asetaLiukusaadin("musicVolume", prosentti);
+}
 
-    soitaEfekti(jumpscareAani, "sound8.mp3");
+function paivitaEfektienNaytto() {
+    const prosentti = Math.round(efektienAanenvoimakkuus * 100);
+    asetaTeksti("effectsVolumeValue", prosentti + "%");
+    asetaLiukusaadin("effectsVolume", prosentti);
+}
 
-    clearTimeout(jumpscareAjastin);
-    jumpscareAjastin = setTimeout(() => {
-        jumpscare.style.display = "none";
-    }, 3000);
+function asetaMusiikinVoimakkuus() {
+    musiikki.volume = Math.max(0, Math.min(1, musiikinAanenvoimakkuus));
+}
+
+function asetaEfektienVoimakkuus() {
+    kaikkiAanet().forEach(aani => {
+        aani.volume = Math.max(0, Math.min(1, efektienAanenvoimakkuus));
+    });
 }
 
 function paivitaAaniAsetukset() {
-    musiikki.volume = aanenvoimakkuus;
-    kohtausAani.volume = aanenvoimakkuus;
-    egisAani.volume = aanenvoimakkuus;
-    toimintoAani.volume = aanenvoimakkuus;
-    nappainAani.volume = aanenvoimakkuus;
-    voittoAani.volume = aanenvoimakkuus;
-    havioAani.volume = aanenvoimakkuus;
-    oksennusAani.volume = aanenvoimakkuus;
-    jumpscareAani.volume = aanenvoimakkuus;
+    asetaMusiikinVoimakkuus();
+    asetaEfektienVoimakkuus();
+    paivitaMusiikinNaytto();
+    paivitaEfektienNaytto();
 
     if (!musiikkiPaalla) {
         musiikki.pause();
@@ -89,91 +110,21 @@ function paivitaAaniAsetukset() {
 }
 
 function kaynnistaMusiikki() {
-    aanetKaynnistetty = true;
+    if (!musiikkiPaalla) return;
 
-    if (musiikkiPaalla) {
-        musiikki.play().catch(error => {
-            console.error("Musiikin käynnistys epäonnistui:", error);
-        });
+    asetaMusiikinVoimakkuus();
+
+    if (musiikki.paused) {
+        musiikki.play().catch(() => {});
     }
 }
-
-function avaaAanet() {
-    kohtausAani.src = "sound1.mp3";
-
-    [kohtausAani, egisAani].forEach(aani => {
-        aani.muted = true;
-        aani.play().then(() => {
-            if (aani.muted) {
-                aani.pause();
-                aani.currentTime = 0;
-                aani.muted = false;
-            }
-        }).catch(() => {
-            aani.muted = false;
-        });
-    });
-}
-
-function soitaEfekti(aani, tiedosto) {
-    if (!efektitPaalla) return;
-
-    aani.pause();
-    aani.currentTime = 0;
-    aani.muted = false;
-    aani.src = tiedosto;
-    aani.volume = aanenvoimakkuus;
-    aani.play().catch(() => {});
-}
-
-function soitaKohtausAani(numero) {
-    if (!efektitPaalla) return;
-
-    kohtausAani.pause();
-    kohtausAani.currentTime = 0;
-    kohtausAani.muted = false;
-    kohtausAani.src = "sound" + (numero + 1) + ".mp3";
-    kohtausAani.volume = aanenvoimakkuus;
-    kohtausAani.play().catch(() => {});
-}
-
-function soitaToimintoAani() {
-    if (!efektitPaalla) return;
-
-    toimintoAani.pause();
-    toimintoAani.currentTime = 0;
-    toimintoAani.volume = aanenvoimakkuus;
-    toimintoAani.play().catch(() => {});
-}
-
-function soitaNappainAani() {
-    if (!efektitPaalla) return;
-
-    nappainAani.pause();
-    nappainAani.currentTime = 0;
-    nappainAani.volume = aanenvoimakkuus;
-    nappainAani.play().catch(() => {});
-}
-
-document.addEventListener("click", tapahtuma => {
-    const nappi = tapahtuma.target.closest("button");
-
-    if (!nappi || nappi.id === "actionButton") return;
-
-    soitaNappainAani();
-});
 
 function vaihdaMusiikki() {
     musiikkiPaalla = !musiikkiPaalla;
 
     if (musiikkiPaalla) {
-        aanetKaynnistetty = true;
         musiikki.currentTime = 0;
-        musiikki.volume = aanenvoimakkuus;
-
-        musiikki.play().catch(error => {
-            console.error("Musiikin käynnistys epäonnistui:", error);
-        });
+        kaynnistaMusiikki();
     } else {
         musiikki.pause();
         musiikki.currentTime = 0;
@@ -186,42 +137,141 @@ function vaihdaEfektit() {
     efektitPaalla = !efektitPaalla;
 
     if (!efektitPaalla) {
-        kohtausAani.pause();
-        egisAani.pause();
-        toimintoAani.pause();
-        nappainAani.pause();
-        voittoAani.pause();
-        havioAani.pause();
-        oksennusAani.pause();
-        jumpscareAani.pause();
+        kaikkiAanet().forEach(aani => aani.pause());
     }
 
     paivitaAaniAsetukset();
 }
 
-function vaihdaAanenvoimakkuutta(arvo) {
-    aanenvoimakkuus = Number(arvo) / 100;
-    document.getElementById("volumeValue").textContent =
-        arvo + "%";
+function vaihdaMusiikinAanenvoimakkuutta(arvo) {
+    musiikinAanenvoimakkuus = Number(arvo) / 100;
+    asetaMusiikinVoimakkuus();
+    paivitaMusiikinNaytto();
+}
 
-    paivitaAaniAsetukset();
+function vaihdaEfektienAanenvoimakkuutta(arvo) {
+    efektienAanenvoimakkuus = Number(arvo) / 100;
+    asetaEfektienVoimakkuus();
+    paivitaEfektienNaytto();
+}
+
+function vaihdaAanenvoimakkuutta(arvo) {
+    musiikinAanenvoimakkuus = Number(arvo) / 100;
+    efektienAanenvoimakkuus = Number(arvo) / 100;
+    asetaMusiikinVoimakkuus();
+    asetaEfektienVoimakkuus();
+    paivitaMusiikinNaytto();
+    paivitaEfektienNaytto();
+    asetaTeksti("volumeValue", arvo + "%");
+    asetaLiukusaadin("volume", Number(arvo));
+}
+
+function liitaLiukusaadin(tunniste, toiminto) {
+    const elementti = document.getElementById(tunniste);
+    if (!elementti) return;
+
+    elementti.addEventListener("input", () => {
+        toiminto(elementti.value);
+    });
+}
+
+liitaLiukusaadin("musicVolume", vaihdaMusiikinAanenvoimakkuutta);
+liitaLiukusaadin("effectsVolume", vaihdaEfektienAanenvoimakkuutta);
+liitaLiukusaadin("volume", vaihdaAanenvoimakkuutta);
+
+function soitaEfekti(aani, tiedosto) {
+    if (!efektitPaalla) return;
+
+    aani.pause();
+    aani.currentTime = 0;
+    aani.muted = false;
+    aani.src = tiedosto;
+    aani.volume = efektienAanenvoimakkuus;
+    aani.play().catch(() => {});
+}
+
+function soitaKohtausAani(tiedosto) {
+    if (!efektitPaalla) return;
+
+    kohtausAani.pause();
+    kohtausAani.currentTime = 0;
+    kohtausAani.muted = false;
+    kohtausAani.src = tiedosto;
+    kohtausAani.volume = efektienAanenvoimakkuus;
+    kohtausAani.play().catch(() => {});
+}
+
+function soitaToimintoAani() {
+    if (!efektitPaalla) return;
+
+    toimintoAani.pause();
+    toimintoAani.currentTime = 0;
+    toimintoAani.volume = efektienAanenvoimakkuus;
+    toimintoAani.play().catch(() => {});
+}
+
+function soitaNappainAani() {
+    if (!efektitPaalla) return;
+
+    nappainAani.pause();
+    nappainAani.currentTime = 0;
+    nappainAani.volume = efektienAanenvoimakkuus;
+    nappainAani.play().catch(() => {});
+}
+
+document.addEventListener("click", tapahtuma => {
+    const nappi = tapahtuma.target.closest("button");
+
+    if (!nappi || nappi.id === "actionButton") return;
+
+    soitaNappainAani();
+});
+
+function naytaJumpscare() {
+    if (jumpscare.style.display === "block") return;
+
+    jumpscare.style.display = "block";
+    soitaEfekti(jumpscareAani, "sound8.mp3");
+
+    clearTimeout(jumpscareAjastin);
+
+    jumpscareAjastin = setTimeout(() => {
+        jumpscare.style.display = "none";
+    }, 3000);
 }
 
 const kohtaukset = [
     {
         title: "Koulupäivä",
         text: 'Eero sai tunnilla idean: "Menempäs koulun jälkeen kauppaan ja ostan Egiksen!"',
-        image: "egis1.png"
+        image: "egis1.png",
+        sound: "sound1.mp3"
     },
     {
-        title: "Mietintäää",
+        title: "Koulupäivä",
+        text: 'Opettaja: "Eero, et nuku tunnilla! Laskeppas nämä laskut:"',
+        image: "egis1.png",
+        sound: "sound1.mp3",
+        quiz: true
+    },
+    {
+        title: "Mietintää",
         text: '"Vanhempani ovat kyllä kieltäneet Egikset ja niiden juonnin..."',
-        image: "egis2.png"
+        image: "egis2.png",
+        sound: "sound2.mp3"
     },
     {
         title: "Suunnitelma",
-        text: '"Mutta mitä jos juon sen hiljaa, nopeaa huoneessani ja ilman että isä rankaisee?" Eero mietti.',
-        image: "egis3.png"
+        text: '"Mutta mitä jos juon sen hiljaa, nopeaa huoneessani ja ilman että isä rankaisee?" Eero miettii.',
+        image: "egis3.png",
+        sound: "sound3.mp3"
+    },
+    {
+        title: "Kauppa",
+        text: "Eero menee kauppaan ja huomaa Egiksen maksavan 1,55 €. Hänellä on 2,00 €. Paljonko rahaa hänelle jää?",
+        image: "egis5.png",
+        sound: "sound1.mp3",
+        shopQuiz: true
     }
 ];
 
@@ -267,6 +317,29 @@ const kohtauksetValmiina = Promise.all(
     })
 );
 
+function haeQuizAlue() {
+    let alue = document.getElementById("quizArea");
+
+    if (!alue) {
+        alue = document.createElement("div");
+        alue.id = "quizArea";
+
+        const laatikko = document.querySelector("#story .story-box");
+        const ensimmainenNappi = laatikko.querySelector("button");
+
+        laatikko.insertBefore(alue, ensimmainenNappi);
+    }
+
+    return alue;
+}
+
+function haeSkipNappi() {
+    return (
+        document.getElementById("skipButton") ||
+        document.querySelector('#story button[onclick="ohitaKohtaus()"]')
+    );
+}
+
 function avaaPaneeli(tunniste) {
     suljePaneelit();
     document.getElementById(tunniste).style.display = "block";
@@ -279,14 +352,21 @@ function suljePaneelit() {
 
 async function kaynnistaTarina() {
     suljePaneelit();
+
     clearTimeout(kohtausAjastin);
     clearTimeout(meluAjastin);
     clearInterval(nopeusAjastin);
 
-    kaynnistaMusiikki();
-    avaaAanet();
-
     const kaynnistysNumero = ++tarinanKaynnistysNumero;
+
+    ensimmainenAaniJoKaynnistetty = false;
+
+    if (efektitPaalla) {
+        soitaKohtausAani("sound1.mp3");
+        ensimmainenAaniJoKaynnistetty = true;
+    }
+
+    kaynnistaMusiikki();
 
     await kohtauksetValmiina;
 
@@ -308,52 +388,185 @@ function naytaKohtaus(kaynnistysNumero) {
 
     const tarina = document.getElementById("story");
     const kohtaus = kohtaukset[nykyinenKohtaus];
+    const quizArea = haeQuizAlue();
+    const skipButton = haeSkipNappi();
 
     tarina.style.backgroundImage = 'url("' + kohtaus.image + '")';
+    tarina.style.backgroundPosition = "";
+    tarina.style.backgroundSize = "";
+    tarina.style.backgroundRepeat = "";
+
     document.getElementById("sceneTitle").textContent = kohtaus.title;
     document.getElementById("narration").textContent = kohtaus.text;
 
-    soitaKohtausAani(nykyinenKohtaus);
+    quizArea.innerHTML = "";
 
-    const kohtauksenAloitusaika = performance.now();
-
-    function siirrySeuraavaanKohtaukseen() {
-        if (kaynnistysNumero !== tarinanKaynnistysNumero) return;
-
-        const kulunutAika = performance.now() - kohtauksenAloitusaika;
-        const jaljella = Math.max(0, 3000 - kulunutAika);
-
-        if (jaljella > 0) {
-            kohtausAjastin = setTimeout(siirrySeuraavaanKohtaukseen, jaljella);
-            return;
-        }
-
-        if (nykyinenKohtaus < kohtaukset.length - 1) {
-            nykyinenKohtaus++;
-            naytaKohtaus(kaynnistysNumero);
+    if (efektitPaalla) {
+        if (nykyinenKohtaus === 0 && ensimmainenAaniJoKaynnistetty) {
+            ensimmainenAaniJoKaynnistetty = false;
         } else {
-            kaynnistaPeli();
+            soitaKohtausAani(kohtaus.sound);
         }
     }
 
-    kohtausAjastin = setTimeout(siirrySeuraavaanKohtaukseen, 3000);
+    if (skipButton) {
+        skipButton.style.display = "inline-block";
+    }
+
+    if (kohtaus.quiz) {
+        const ohje = document.createElement("p");
+        ohje.textContent =
+            "Vastaa kaikkiin kolmeen laskuun ennen jatkamista. Voit myös ohittaa tämän, jos olet laiska, painamalla 'Skippaa' nappia.";
+
+        const laskut = [
+            { teksti: "Lasku 1. 13 + 74 =", vastaus: "87" },
+            { teksti: "Lasku 2. 7 × 8 =", vastaus: "56" },
+            { teksti: "Lasku 3. 6² =", vastaus: "36" }
+        ];
+
+        quizArea.appendChild(ohje);
+
+        const kentat = [];
+
+        laskut.forEach((lasku, indeksi) => {
+            const rivi = document.createElement("div");
+            rivi.style.display = "block";
+            rivi.style.width = "100%";
+            rivi.style.marginBottom = "12px";
+
+            const label = document.createElement("label");
+            label.textContent = lasku.teksti;
+            label.htmlFor = "laskuVastaus" + indeksi;
+            label.style.display = "block";
+
+            const input = document.createElement("input");
+            input.type = "number";
+            input.id = "laskuVastaus" + indeksi;
+            input.placeholder = "Vastauksesi";
+            input.autocomplete = "off";
+            input.style.display = "block";
+
+            kentat.push(input);
+            rivi.append(label, input);
+            quizArea.appendChild(rivi);
+        });
+
+        const tarkista = document.createElement("button");
+        tarkista.type = "button";
+        tarkista.textContent = "Tarkista vastaukset";
+
+        const palaute = document.createElement("p");
+        palaute.id = "quizFeedback";
+
+        tarkista.addEventListener("click", () => {
+            const kaikkiOikein = kentat.every((input, indeksi) => {
+                return input.value.trim() === laskut[indeksi].vastaus;
+            });
+
+            if (kaikkiOikein) {
+                palaute.textContent = "Kaikki oikein! Eero voi jatkaa.";
+                kentat.forEach(input => input.disabled = true);
+                tarkista.disabled = true;
+
+                kohtausAjastin = setTimeout(() => {
+                    siirrySeuraavaanKohtaukseen(kaynnistysNumero);
+                }, 1200);
+            } else {
+                palaute.textContent =
+                    "Kaikki vastaukset eivät ole oikein. Yritä uudelleen!";
+            }
+        });
+
+        quizArea.append(tarkista, palaute);
+        kentat[0].focus();
+        return;
+    }
+
+    if (kohtaus.shopQuiz) {
+        const label = document.createElement("label");
+        label.textContent = "Paljonko rahaa jää? Kirjoita vastaus euroina:";
+        label.htmlFor = "kauppaVastaus";
+
+        const input = document.createElement("input");
+        input.type = "text";
+        input.id = "kauppaVastaus";
+        input.placeholder = "Esim. 0,80";
+        input.autocomplete = "off";
+
+        const tarkista = document.createElement("button");
+        tarkista.type = "button";
+        tarkista.textContent = "Tarkista";
+
+        const palaute = document.createElement("p");
+        palaute.id = "quizFeedback";
+
+        tarkista.addEventListener("click", tarkistaKaupanVastaus);
+
+        input.addEventListener("keydown", tapahtuma => {
+            if (tapahtuma.key === "Enter") {
+                tarkistaKaupanVastaus();
+            }
+        });
+
+        quizArea.append(label, input, tarkista, palaute);
+        input.focus();
+        return;
+    }
+
+    kohtausAjastin = setTimeout(() => {
+        siirrySeuraavaanKohtaukseen(kaynnistysNumero);
+    }, 4000);
 }
 
-function ohitaKohtaus() {
+function siirrySeuraavaanKohtaukseen(kaynnistysNumero) {
+    if (kaynnistysNumero !== tarinanKaynnistysNumero) return;
+
     clearTimeout(kohtausAjastin);
 
     if (nykyinenKohtaus < kohtaukset.length - 1) {
         nykyinenKohtaus++;
-        naytaKohtaus(tarinanKaynnistysNumero);
+        naytaKohtaus(kaynnistysNumero);
     } else {
         kaynnistaPeli();
     }
+}
+
+function tarkistaKaupanVastaus() {
+    const input = document.getElementById("kauppaVastaus");
+    const palaute = document.getElementById("quizFeedback");
+
+    if (!input || !palaute) return;
+
+    const vastaus = input.value.trim().replace(",", ".").replace("€", "");
+    const numero = Number(vastaus);
+
+    if (Number.isFinite(numero) && Math.abs(numero - 0.45) < 0.001) {
+        palaute.textContent = "Oikein! Eerolle jää 0,45 €. Hän pääsee kotiin.";
+        input.disabled = true;
+
+        const tarkista = document.querySelector("#quizArea button");
+        if (tarkista) tarkista.disabled = true;
+
+        kohtausAjastin = setTimeout(() => {
+            siirrySeuraavaanKohtaukseen(tarinanKaynnistysNumero);
+        }, 1200);
+    } else {
+        palaute.textContent = "Ei ihan oikein. Yritäppä uudelleen!";
+        input.focus();
+        input.select();
+    }
+}
+
+function ohitaKohtaus() {
+    clearTimeout(kohtausAjastin);
+    siirrySeuraavaanKohtaukseen(tarinanKaynnistysNumero);
 }
 
 function kaynnistaPeli() {
     clearTimeout(kohtausAjastin);
     clearTimeout(meluAjastin);
     clearInterval(nopeusAjastin);
+
     ++tarinanKaynnistysNumero;
 
     kohtausAani.pause();
@@ -376,8 +589,7 @@ function kaynnistaPeli() {
         "Eero löytää Egis-tölkin huoneestaan.";
     document.getElementById("gameStatus").textContent =
         "Avaa tölkki aloittaaksesi.";
-    document.getElementById("actionButton").textContent =
-        "Avaa Egis";
+    document.getElementById("actionButton").textContent = "Avaa Egis";
 
     paivitaMittarit();
     laskeMelua();
@@ -417,17 +629,14 @@ function pelitoiminto() {
         melu = Math.min(100, melu + 35);
         viimeisinMeluPaivitys = nyt;
 
-        document.getElementById("can").style.transform =
-            "rotate(-10deg)";
+        document.getElementById("can").style.transform = "rotate(-10deg)";
 
         document.getElementById("gameText").textContent =
             "Egis on avattu. Eero alkaa juoda sitä.";
 
-        document.getElementById("gameStatus").textContent =
-            "Tölkki avattu.";
+        document.getElementById("gameStatus").textContent = "Tölkki avattu.";
 
-        document.getElementById("actionButton").textContent =
-            "Juo Egistä";
+        document.getElementById("actionButton").textContent = "Juo Egistä";
 
         kaynnistaNopeusmittari();
     } else {
@@ -517,18 +726,14 @@ function paivitaMittarit() {
     document.getElementById("speedValue").textContent =
         "Nopeus: " + nopeus;
 
-    document.getElementById("noiseBar").style.width =
-        melu + "%";
-
-    document.getElementById("speedBar").style.width =
-        nopeus + "%";
-
-    document.getElementById("progressBar").style.width =
-        edistyminen + "%";
+    document.getElementById("noiseBar").style.width = melu + "%";
+    document.getElementById("speedBar").style.width = nopeus + "%";
+    document.getElementById("progressBar").style.width = edistyminen + "%";
 }
 
 function paataPeli(voitto) {
     peliPaattynyt = true;
+
     clearTimeout(meluAjastin);
     clearInterval(nopeusAjastin);
 
@@ -542,15 +747,11 @@ function paataPeli(voitto) {
     document.getElementById("ending").style.display = "block";
 
     if (voitto) {
-        document.getElementById("endingTitle").textContent =
-            "Hyvä lopetus";
-
+        document.getElementById("endingTitle").textContent = "Hyvä lopetus";
         document.getElementById("endingText").textContent =
             "Eero sai Egiksen juotua.";
     } else {
-        document.getElementById("endingTitle").textContent =
-            "Huono lopetus";
-
+        document.getElementById("endingTitle").textContent = "Huono lopetus";
         document.getElementById("endingText").textContent =
             "Isä suuttui ja rankaisi Eeroa.";
     }
@@ -562,6 +763,7 @@ function aloitaPeliUudelleen() {
 
 function poistuTarinasta() {
     ++tarinanKaynnistysNumero;
+
     clearTimeout(kohtausAjastin);
     clearTimeout(meluAjastin);
     clearInterval(nopeusAjastin);
@@ -569,14 +771,7 @@ function poistuTarinasta() {
 
     jumpscare.style.display = "none";
 
-    kohtausAani.pause();
-    egisAani.pause();
-    toimintoAani.pause();
-    nappainAani.pause();
-    voittoAani.pause();
-    havioAani.pause();
-    oksennusAani.pause();
-    jumpscareAani.pause();
+    kaikkiAanet().forEach(aani => aani.pause());
 
     document.getElementById("story").style.display = "none";
     document.getElementById("game").style.display = "none";

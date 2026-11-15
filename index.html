@@ -22,11 +22,14 @@
         <p>Toivo</p>
         <p>Feeli</p>
         <p>Refresco Benelux</p>
+        <p>Refresco Finland Oy</p>
+        <p>S-Kaupat</p>
+
     </div>
 
     <div class="panel" id="settings">
         <button class="close" onclick="suljePaneelit()">×</button>
-        <h2>Asetukset</h2>
+        <h2>EGIS 1.5 - Asetukset</h2>
 
         <p>Musiikki</p>
         <button class="setting-button" id="musicToggle" onclick="vaihdaMusiikki()">
@@ -43,24 +46,36 @@
             Vaikeustaso: Helppo
         </button>
 
-        <p>Äänenvoimakkuus</p>
+        <p>Musiikin äänenvoimakkuus</p>
         <input
             type="range"
-            id="volume"
+            id="musicVolume"
             min="0"
             max="100"
             value="50"
-            oninput="vaihdaAanenvoimakkuutta(this.value)"
+            oninput="vaihdaMusiikinAanenvoimakkuutta(this.value)"
         >
-        <p id="volumeValue">50%</p>
+        <p id="musicVolumeValue">50%</p>
+
+        <p>Ääniefektien äänenvoimakkuus</p>
+        <input
+            type="range"
+            id="effectsVolume"
+            min="0"
+            max="100"
+            value="50"
+            oninput="vaihdaEfektienAanenvoimakkuutta(this.value)"
+        >
+        <p id="effectsVolumeValue">50%</p>
     </div>
 
     <div id="story">
         <div class="story-box">
             <h1 id="sceneTitle"></h1>
             <p id="narration"></p>
+            <div id="quizArea"></div>
             <button onclick="poistuTarinasta()">Päävalikko</button>
-            <button onclick="ohitaKohtaus()">Skippaa</button>
+            <button id="skipButton" onclick="ohitaKohtaus()">Skippaa</button>
         </div>
     </div>
 
