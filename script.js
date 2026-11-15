@@ -44,12 +44,6 @@ function vaihdaVaikeustasoa() {
 musiikki.volume = aanenvoimakkuus;
 musiikki.loop = true;
 
-musiikki.addEventListener("ended", () => {
-    musiikki.currentTime = 0;
-    if (musiikkiPaalla) {
-        musiikki.play().catch(() => {});
-    }
-});
 kohtausAani.volume = aanenvoimakkuus;
 egisAani.volume = aanenvoimakkuus;
 toimintoAani.volume = aanenvoimakkuus;
@@ -85,8 +79,6 @@ function paivitaAaniAsetukset() {
 
     if (!musiikkiPaalla) {
         musiikki.pause();
-    } else if (musiikki.paused && aanetKaynnistetty) {
-        musiikki.play().catch(() => {});
     }
 
     document.getElementById("musicToggle").textContent =
@@ -100,7 +92,9 @@ function kaynnistaMusiikki() {
     aanetKaynnistetty = true;
 
     if (musiikkiPaalla) {
-        musiikki.play().catch(() => {});
+        musiikki.play().catch(error => {
+            console.error("Musiikin käynnistys epäonnistui:", error);
+        });
     }
 }
 
@@ -171,11 +165,21 @@ document.addEventListener("click", tapahtuma => {
 
 function vaihdaMusiikki() {
     musiikkiPaalla = !musiikkiPaalla;
-    paivitaAaniAsetukset();
 
     if (musiikkiPaalla) {
-        kaynnistaMusiikki();
+        aanetKaynnistetty = true;
+        musiikki.currentTime = 0;
+        musiikki.volume = aanenvoimakkuus;
+
+        musiikki.play().catch(error => {
+            console.error("Musiikin käynnistys epäonnistui:", error);
+        });
+    } else {
+        musiikki.pause();
+        musiikki.currentTime = 0;
     }
+
+    paivitaAaniAsetukset();
 }
 
 function vaihdaEfektit() {
