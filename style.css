@@ -314,16 +314,3 @@ button:hover {
         padding: 20px;
     }
 }
-
-/* ## Testi juttu*/
-#secretClickArea {
-    position: fixed;
-    left: 40%;
-    top: 30%;
-    width: 15%;
-    height: 15%;
-    background: rgba(255, 0, 0, 0.3);
-    border: 3px solid red;
-    cursor: crosshair;
-    z-index: 99998;
-}
