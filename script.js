@@ -586,7 +586,7 @@ function kaynnistaPeli() {
     document.getElementById("can").textContent = "EGIS";
     document.getElementById("can").style.transform = "none";
     document.getElementById("gameText").textContent =
-        "Eero löytää Egis-tölkin huoneestaan.";
+        "Eero on valmis juomaan Egiksen.";
     document.getElementById("gameStatus").textContent =
         "Avaa tölkki aloittaaksesi.";
     document.getElementById("actionButton").textContent = "Avaa Egis";
