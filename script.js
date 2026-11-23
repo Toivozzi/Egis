@@ -45,6 +45,37 @@ function vaihdaVaikeustasoa() {
         "Vaikeustaso: " + vaikeustaso;
 }
 
+const resoluutiot = [
+    { nimi: "Auto", kerroin: 1 },
+    { nimi: "Pieni (75%)", kerroin: 0.75 },
+    { nimi: "Keskikoko (90%)", kerroin: 0.9 },
+    { nimi: "Suuri (110%)", kerroin: 1.1 },
+    { nimi: "Iso (125%)", kerroin: 1.25 }
+];
+
+let resoluutioIndeksi = 0;
+let puhelinversioPaalla = false;
+
+function vaihdaResoluutio() {
+    resoluutioIndeksi = (resoluutioIndeksi + 1) % resoluutiot.length;
+
+    const valittu = resoluutiot[resoluutioIndeksi];
+
+    document.documentElement.style.zoom = valittu.kerroin === 1 ? "" : valittu.kerroin;
+
+    document.getElementById("resolutionToggle").textContent =
+        "Resoluutio: " + valittu.nimi;
+}
+
+function vaihdaPuhelinversio() {
+    puhelinversioPaalla = !puhelinversioPaalla;
+
+    document.body.classList.toggle("puhelin", puhelinversioPaalla);
+
+    document.getElementById("phoneToggle").textContent =
+        "Puhelinversio: " + (puhelinversioPaalla ? "PÄÄLLÄ" : "POIS");
+}
+
 function kaikkiAanet() {
     return [
         kohtausAani,

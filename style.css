@@ -52,6 +52,9 @@ button:hover {
     width: 500px;
     max-width: 92%;
     min-height: 300px;
+    max-height: 92vh;
+    max-height: 92dvh;
+    overflow-y: auto;
     z-index: 10;
 }
 
@@ -67,10 +70,12 @@ button:hover {
     width: 50px;
     height: 50px;
     padding: 0;
-    position: absolute;
-    right: 10px;
-    top: 10px;
+    position: sticky;
+    top: 0;
+    float: right;
+    margin: -40px -40px 0 0;
     font-size: 30px;
+    z-index: 2;
 }
 
 #volume {
@@ -278,6 +283,10 @@ button:hover {
         padding: 35px 20px;
     }
 
+    .close {
+        margin: -25px -10px 0 0;
+    }
+
     .story-box {
         top: 12px;
         left: 12px;
@@ -312,4 +321,59 @@ button:hover {
     .ending-box {
         padding: 20px;
     }
+}
+
+body.puhelin .menu {
+    left: 20px;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    gap: 14px;
+}
+
+body.puhelin .menu button {
+    width: 100%;
+}
+
+body.puhelin .panel {
+    padding: 35px 20px;
+}
+
+body.puhelin .close {
+    margin: -25px -10px 0 0;
+}
+
+body.puhelin .story-box {
+    top: 12px;
+    left: 12px;
+    width: calc(100% - 24px);
+    padding: 18px;
+}
+
+body.puhelin .story-box h1 {
+    font-size: 28px;
+}
+
+body.puhelin #narration {
+    font-size: 20px;
+}
+
+body.puhelin #game,
+body.puhelin #ending {
+    padding: 12px;
+}
+
+body.puhelin .game-box {
+    padding: 15px;
+}
+
+body.puhelin .meters-panel {
+    position: static;
+    width: min(320px, 100%);
+    margin: 25px auto;
+    text-align: left;
+}
+
+body.puhelin .ending-box {
+    padding: 20px;
 }
