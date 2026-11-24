@@ -1,3 +1,6 @@
+<p align="center">
+  <img src="./f.png" width="600" alt="kuva">
+</p>
 # Egis 
 Toivoton Gamesin kehittämä todella laadukas peli.
 Suomalainen, koukuttava, nopea, jatkuvasti päivityksiä :OOOOOO
